@@ -5,7 +5,6 @@
         "adminUsername": {
             "type": "string",
             "minLength": 1,
-            "defaultValue": "spravce",
             "metadata": {
                 "description": "Admin username"
             }
@@ -13,7 +12,6 @@
         "adminPassword": {
             "type": "securestring",
             "minLength": 12,
-            "defaultValue": "Azure123456789",
             "metadata": {
                 "description": "Admin password"
             }
