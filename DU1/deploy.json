@@ -100,7 +100,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('vnetClientName'), '/subnetClient')]",
+            "name": "[variables('subnetClientName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
             ],
@@ -269,7 +269,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('vnetServerName'), '/subnetClient')]",
+            "name": "[variables('subnetServerName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
             ],
