@@ -53,8 +53,8 @@
         "diskType": "Premium_LRS",
         "diskClientName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
         "diskServerName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
-        "scriptName": "script.ps1",
-        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureAcademy/master/DU1/', variables('scriptName'))]",
+        "scriptName": "script1.ps1",
+        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureTesty/master/testapp/', variables('scriptName'))]",
     },
     "resources": [
         {
@@ -62,9 +62,6 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('vnetClientName')]",
             "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "virtual-network"
-            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[variables('vnetClientNet')]"
@@ -76,7 +73,52 @@
                             "addressPrefix": "[variables('subnetClientNet')]"
                         }
                     }
+                ],
+                "virtualNetworkPeerings": [
+                    {
+                        "name": "peerClient2Server",
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
+                            },
+                            "allowVirtualNetworkAccess": true,
+                            "allowForwardedTraffic": false,
+                            "allowGatewayTransit": false,
+                            "useRemoteGateways": false,
+                            "remoteAddressSpace": {
+                                "addressPrefixes": "[variables('subnetServerName')]"
+                            }
+                        }
+                    }
                 ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(variables('vnetClientName'), '/subnetClient')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[variables('subnetClientNet')]"
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[concat(variables('vnetClientName'), '/peerClient2Server')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
+            ],
+            "properties": {
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
+                },
+                "remoteAddressSpace": {
+                    "addressPrefixes": "[variables('vnetServerNet')]"
+                }
             }
         },
         {
@@ -104,7 +146,52 @@
                             }
                         }
                     }
+                ],
+                "virtualNetworkPeerings": [
+                    {
+                        "name": "peerServer2Client",
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
+                            },
+                            "allowVirtualNetworkAccess": true,
+                            "allowForwardedTraffic": false,
+                            "allowGatewayTransit": false,
+                            "useRemoteGateways": false,
+                            "remoteAddressSpace": { 
+                                "addressPrefixes": "[variables('subnetClientNet')]"
+                            }
+                        }
+                    }
                 ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(variables('vnetServerName'), '/subnetClient')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[variables('subnetServerNet')]"
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[concat(variables('vnetServerName'), '/peerClient2Server')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
+            ],
+            "properties": {
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
+                },
+                "remoteAddressSpace": {
+                    "addressPrefixes": "[variables('vnetClientNet')]"
+                }
             }
         },
         {
@@ -157,8 +244,8 @@
                 "displayName": "network-interface"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetClientName'))]",
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"
+                    "[concat('Microsoft.Network/virtualNetworks/', variables('vnetClientName'))]",
+                    "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"    
             ],
             "properties": {
                 "ipConfigurations": [
@@ -216,124 +303,6 @@
                 "publicIPAllocationMethod": "Dynamic"
             }
         },
-        {
-            "apiVersion": "2019-03-01",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "virtual-machine"
-            },
-            "dependsOn": [],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[variables('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('windowsOSVersion')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "osType": "Windows",
-                        "name":  "[concat('diskClient', uniqueString(resourceGroup().id))]",
-                        "createOption": "FromImage",
-                        "caching": "ReadWrite",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('diskType')]",
-                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskClientName'))]"
-                        }
-                    },
-                    "dataDisks": []
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicClientName'))]"
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "apiVersion": "2019-03-01",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmprefix'), variables('vmServerName'))]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "virtual-machine"
-            },
-            "dependsOn": [],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[variables('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('vmprefix'), variables('vmServerName'))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('windowsOSVersion')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "osType": "Windows",
-                        "name":  "[concat('diskServer', uniqueString(resourceGroup().id))]",
-                        "createOption": "FromImage",
-                        "caching": "ReadWrite",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('diskType')]",
-                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskServerName'))]"
-                        }
-                    },
-                    "dataDisks": []
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicServerName'))]"
-                        }
-                    ]
-                }
-            },
-            "resources": [
-                {
-                    "apiVersion": "2018-06-01",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "scriptServer",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmServerName'))]"
-                    ],
-                    "tags": {
-                        "displayName": "script"
-                    },
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.9",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "fileUris": "[variables('scriptURI')]"
-                        },
-                        "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]"
-                        }
-                    }
-                }
-            ]   
-        }
     ],
     "outputs": ""
 }
