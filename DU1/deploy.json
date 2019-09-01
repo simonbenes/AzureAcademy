@@ -4,6 +4,7 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
+            "defaultValue": "spravce",
             "minLength": 1,
             "metadata": {
                 "description": "Admin username"
