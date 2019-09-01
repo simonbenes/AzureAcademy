@@ -437,9 +437,6 @@
                         "protectedSettings": {
                             "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]"
                         }
-                    },
-                    "debugSettings": {
-                        "detailLevel": "requestContent, responseContent"
                     }
                 }
             ]   
