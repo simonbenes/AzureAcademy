@@ -25,14 +25,7 @@
             "metadata": {
                 "description": "VM prefix"
             }
-        },
-      "numberOfInstances": {
-      "type": "int",
-      "minValue": 1,
-      "defaultValue": 1,
-      "metadata": {
-      "description": "Number of VM instances to be created behind internal load balancer control"
-      }
+        }
     },
     "publicipaddressDnsName": {
       "type": "string",
