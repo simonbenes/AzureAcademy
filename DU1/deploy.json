@@ -133,6 +133,94 @@
         },
         {
             "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicClientName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "network-interface"
+            },
+            "dependsOn": [
+                    "[concat('Microsoft.Network/virtualNetworks/', variables('vnetClientName'))]",
+                    "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"    
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigClient",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('ipAddressClient')]",
+                            "publicIPAddress": {
+                                "id": "[concat(variables('pipId'), '/publicIPAddress', variables('pipName'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(variables('vnetClientId'), '/subnets/', variables('subnetClientName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('pipName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "public-ip"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "virtual-machine"
+            },
+            "dependsOn": [],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('windowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name":  "[concat('diskClient', uniqueString(resourceGroup().id))]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('diskType')]",
+                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskClientName'))]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicClientName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('vnetServerName')]",
             "location": "[resourceGroup().location]",
@@ -258,36 +346,6 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('nicClientName')]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "network-interface"
-            },
-            "dependsOn": [
-                    "[concat('Microsoft.Network/virtualNetworks/', variables('vnetClientName'))]",
-                    "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"    
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfigClient",
-                        "properties": {
-                            "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[variables('ipAddressClient')]",
-                            "publicIPAddress": {
-                                "id": "[concat(variables('pipId'), '/publicIPAddress', variables('pipName'))]"
-                            },
-                            "subnet": {
-                                "id": "[concat(variables('vnetClientId'), '/subnets/', variables('subnetClientName'))]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "apiVersion": "2019-06-01",
-            "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('nicServerName')]",
             "location": "[resourceGroup().location]",
             "tags": {
@@ -309,64 +367,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "apiVersion": "2019-06-01",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[variables('pipName')]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "public-ip"
-            },
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic"
-            }
-        },
-        {
-            "apiVersion": "2019-03-01",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "virtual-machine"
-            },
-            "dependsOn": [],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[variables('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('windowsOSVersion')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "osType": "Windows",
-                        "name":  "[concat('diskClient', uniqueString(resourceGroup().id))]",
-                        "createOption": "FromImage",
-                        "caching": "ReadWrite",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('diskType')]",
-                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskClientName'))]"
-                        }
-                    },
-                    "dataDisks": []
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicClientName'))]"
-                        }
-                    ]
-                }
             }
         },
         {
@@ -416,12 +416,12 @@
             },
             "resources": [
                 {
-                    "apiVersion": "2016-09-01",
+                    "apiVersion": "2018-06-01",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
                     "name": "scriptServer",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmServerName'))]"
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmprefix'), variables('vmServerName'))]"
                     ],
                     "tags": {
                         "displayName": "script"
