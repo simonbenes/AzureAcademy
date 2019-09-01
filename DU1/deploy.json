@@ -105,9 +105,7 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
             ],
             "properties": {
-                "addressPrefix": [
-                    "[variables('subnetClientNet')]"
-                ]
+                "addressPrefix": "[variables('subnetClientNet')]"
             }
         },
         {
@@ -268,7 +266,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[variables('subnetServerName')]",
+            "name": "[concat(variables('vnetServerName'), '/', variables('subnetServerName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
             ],
@@ -389,11 +387,11 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name":  "[variables('diskServerName')]",
+                        "name": "[variables('diskServerName')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "[variables('diskType')]",
+                            "storageAccountType": "[variables('diskType')]"
                         }
                     },
                     "dataDisks": []
