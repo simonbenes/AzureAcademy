@@ -13,7 +13,6 @@
         "adminPassword": {
             "type": "securestring",
             "minLength": 12,
-            "defaultValue": "Azure123456789",
             "metadata": {
                 "description": "Admin password"
             }
