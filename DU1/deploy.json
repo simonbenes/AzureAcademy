@@ -27,14 +27,14 @@
         }
     },
     "variables": {
-        "vnetClientName": "vnetC",
+        "vnetClientName": "vnetClient",
         "vnetClientNet": "10.1.0.0/16",
         "vnetClientId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
         "subnetClientName": "subnetClient",
         "subnetClientNet": "10.1.0.0/24",
         "nicClientName": "nicClient",
         "ipAddressClient": "10.1.0.100",
-        "vnetServerName": "vnetS",
+        "vnetServerName": "vnetServer",
         "vnetServerNet": "10.10.0.0/16",
         "vnetServerId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]",
         "subnetServerName": "subnetServer",
@@ -64,7 +64,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [ 
+                    "addressPrefixes": [
                         "[variables('vnetClientNet')]"
                     ]
                 },
@@ -279,11 +279,10 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[concat(variables('vnetServerName'), '/peerClient2Server')]",
+            "name": "[concat(variables('vnetServerName'), '/peerServer2Client')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', 'peerServer2Client')]"
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
             ],
             "properties": {
                 "remoteVirtualNetwork": {
