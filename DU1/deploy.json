@@ -416,7 +416,7 @@
                     "name": "scriptServer",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[('Microsoft.Compute/virtualMachines/', parameters('vmprefix'), variables('vmServerName'))]"
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmprefix'), variables('vmServerName'))]"
                     ],
                     "tags": {
                         "displayName": "script"
