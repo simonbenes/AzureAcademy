@@ -53,8 +53,8 @@
         "diskType": "Premium_LRS",
         "diskClientName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
         "diskServerName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
-        "scriptName": "script1.ps1",
-        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureTesty/master/testapp/', variables('scriptName'))]",
+        "scriptName": "script.ps1",
+        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureAcademy/master/DU1/', variables('scriptName'))]",
     },
     "resources": [
         {
