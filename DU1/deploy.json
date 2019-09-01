@@ -20,7 +20,7 @@
         },
         "vmprefix": {
             "type": "string",
-            "defaultValue": "SBE_",
+            "defaultValue": "SBE-",
             "metadata": {
                 "description": "VM prefix"
             }
@@ -64,13 +64,17 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[variables('vnetClientNet')]"
+                    "addressPrefixes": [
+                        "[variables('vnetClientNet')]"
+                    ]
                 },
                 "subnets": [
                     {
                         "name": "[variables('subnetClientName')]",
                         "properties": {
-                            "addressPrefix": "[variables('subnetClientNet')]"
+                            "addressPrefix": [
+                                "[variables('subnetClientNet')]"
+                            ]
                         }
                     }
                 ],
@@ -86,7 +90,9 @@
                             "allowGatewayTransit": false,
                             "useRemoteGateways": false,
                             "remoteAddressSpace": {
-                                "addressPrefixes": "[variables('subnetServerName')]"
+                                "addressPrefixes": [
+                                    "[variables('subnetServerName')]"
+                                ]
                             }
                         }
                     }
@@ -101,7 +107,9 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
             ],
             "properties": {
-                "addressPrefix": "[variables('subnetClientNet')]"
+                "addressPrefix": [
+                    "[variables('subnetClientNet')]"
+                ]
             }
         },
         {
@@ -117,7 +125,9 @@
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
                 },
                 "remoteAddressSpace": {
-                    "addressPrefixes": "[variables('vnetServerNet')]"
+                    "addressPrefixes": [
+                        "[variables('vnetServerNet')]"
+                    ]
                 }
             }
         },
@@ -134,13 +144,17 @@
             },
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[variables('vnetServerNet')]"
+                    "addressPrefixes": [
+                        "[variables('vnetServerNet')]"
+                    ]
                 },
                 "subnets": [
                     {
                         "name": "[variables('subnetServerName')]",
                         "properties": {
-                            "addressPrefix": "[variables('subnetServerNet')]",
+                            "addressPrefix": [
+                                "[variables('subnetServerNet')]"
+                            ],
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
                             }
@@ -159,7 +173,9 @@
                             "allowGatewayTransit": false,
                             "useRemoteGateways": false,
                             "remoteAddressSpace": { 
-                                "addressPrefixes": "[variables('subnetClientNet')]"
+                                "addressPrefixes": [
+                                    "[variables('subnetClientNet')]"
+                                ]
                             }
                         }
                     }
@@ -174,7 +190,9 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
             ],
             "properties": {
-                "addressPrefix": "[variables('subnetServerNet')]"
+                "addressPrefix": [
+                    "[variables('subnetServerNet')]"
+                ]
             }
         },
         {
@@ -190,7 +208,9 @@
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
                 },
                 "remoteAddressSpace": {
-                    "addressPrefixes": "[variables('vnetClientNet')]"
+                    "addressPrefixes": [
+                        "[variables('vnetClientNet')]"
+                    ]
                 }
             }
         },
@@ -396,7 +416,7 @@
             },
             "resources": [
                 {
-                    "apiVersion": "2018-06-01",
+                    "apiVersion": "2016-09-01",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
                     "name": "scriptServer",
                     "location": "[resourceGroup().location]",
@@ -417,6 +437,9 @@
                         "protectedSettings": {
                             "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]"
                         }
+                    },
+                    "debugSettings": {
+                        "detailLevel": "requestContent, responseContent"
                     }
                 }
             ]   
