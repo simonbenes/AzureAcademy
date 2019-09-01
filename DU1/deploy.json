@@ -110,25 +110,6 @@
         },
         {
             "apiVersion": "2019-06-01",
-            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[concat(variables('vnetClientName'), '/peerClient2Server')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
-            ],
-            "properties": {
-                "remoteVirtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
-                },
-                "remoteAddressSpace": {
-                    "addressPrefixes": [
-                        "[variables('vnetServerNet')]"
-                    ]
-                }
-            }
-        },
-        {
-            "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('nicClientName')]",
             "location": "[resourceGroup().location]",
@@ -274,25 +255,6 @@
             ],
             "properties": {
                 "addressPrefix": "[variables('subnetServerNet')]"
-            }
-        },
-        {
-            "apiVersion": "2019-06-01",
-            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[concat(variables('vnetServerName'), '/peerServer2Client')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
-            ],
-            "properties": {
-                "remoteVirtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
-                },
-                "remoteAddressSpace": {
-                    "addressPrefixes": [
-                        "[variables('vnetClientNet')]"
-                    ]
-                }
             }
         },
         {
