@@ -6,13 +6,13 @@
       "type": "string",
       "minLength": 1,
       "metadata": {
-      "description": "Admin username"
+        "description": "Admin username"
       }
     },
     "adminPassword": {
       "type": "securestring",
       "metadata": {
-      "description": "Admin password"
+        "description": "Admin password"
       }
     },
     "numberOfInstances": {
@@ -20,7 +20,7 @@
       "minValue": 1,
       "defaultValue": 1,
       "metadata": {
-      "description": "Number of VM instances to be created behind internal load balancer control"
+        "description": "Number of VM instances to be created behind internal load balancer control"
       }
     },
     "publicipaddressDnsName": {
