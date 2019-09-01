@@ -1,0 +1,339 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "spravce",
+            "metadata": {
+                "description": "Admin username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "defaultValue": "Azure123456789",
+            "metadata": {
+                "description": "Admin password"
+            }
+        },
+        "vmprefix": {
+            "type": "string",
+            "defaultValue": "SBE_",
+            "metadata": {
+                "description": "VM prefix"
+            }
+        }
+    },
+    "variables": {
+        "vnetClientName": "vnetC",
+        "vnetClientNet": "10.1.0.0/16",
+        "vnetClientId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
+        "subnetClientName": "subnetClient",
+        "subnetClientNet": "10.1.0.0/24",
+        "nicClientName": "nicClient",
+        "ipAddressClient": "10.1.0.100",
+        "vnetServerName": "vnetS",
+        "vnetServerNet": "10.10.0.0/16",
+        "vnetServerId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]",
+        "subnetServerName": "subnetServer",
+        "subnetServerNet": "10.10.0.0/24",
+        "nicServerName": "nicServer",
+        "ipAddressServer": "10.10.0.100",
+        "nsg": "nsg",
+        "pipName": "pip",
+        "pipId": "[resourceId('Microsoft.Network/virtualNetworks', variables('pipName'))]",
+        "vmClientName": "vmClient",
+        "vmServerName": "vmServer",
+        "vmSize": "Standard_DS1_v2",
+        "imagePublisher": "MicrosoftWindowsServer",
+        "imageOffer": "WindowsServer",
+        "windowsOSVersion": "2019-Datacenter-smalldisk",
+        "diskType": "Premium_LRS",
+        "diskClientName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
+        "diskServerName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
+        "scriptName": "script1.ps1",
+        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureTesty/master/testapp/', variables('scriptName'))]",
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetClientName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "virtual-network"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[variables('vnetClientNet')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetClientName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetClientNet')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetServerName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg'))]"
+            ],
+            "tags": {
+                "displayName": "virtual-network"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[variables('vnetServerNet')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetServerName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetServerNet')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsg')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "network-security-group"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "http",
+                        "properties": {
+                            "description": "block http",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "https",
+                        "properties": {
+                            "description": "allow https",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 200,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicClientName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "network-interface"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetClientName'))]",
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigClient",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('ipAddressClient')]",
+                            "publicIPAddress": {
+                                "id": "[concat(variables('pipId'), '/publicIPAddress', variables('pipName'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(variables('vnetClientId'), '/subnets/', variables('subnetClientName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicServerName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "network-interface"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetServerName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigServer",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('ipAddressServer')]",
+                            "subnet": {
+                                "id": "[concat(variables('vnetServerId'), '/subnets/', variables('subnetServerName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('pipName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "public-ip"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "virtual-machine"
+            },
+            "dependsOn": [],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('vmprefix'), variables('vmClientName'))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('windowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name":  "[concat('diskClient', uniqueString(resourceGroup().id))]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('diskType')]",
+                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskClientName'))]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicClientName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('vmprefix'), variables('vmServerName'))]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "virtual-machine"
+            },
+            "dependsOn": [],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('vmprefix'), variables('vmServerName'))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('windowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name":  "[concat('diskServer', uniqueString(resourceGroup().id))]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('diskType')]",
+                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskServerName'))]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicServerName'))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2018-06-01",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "scriptServer",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmServerName'))]"
+                    ],
+                    "tags": {
+                        "displayName": "script"
+                    },
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.9",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": "[variables('scriptURI')]"
+                        },
+                        "protectedSettings": {
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]"
+                        }
+                    }
+                }
+            ]   
+        }
+    ],
+    "outputs": ""
+}
