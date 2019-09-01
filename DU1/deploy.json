@@ -21,8 +21,7 @@
             "metadata": {
                 "description": "VM prefix"
             }
-        }
-    },
+        },
       "numberOfInstances": {
       "type": "int",
       "minValue": 1,
