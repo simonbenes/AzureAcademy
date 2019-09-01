@@ -11,7 +11,6 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "minLength": 12,
             "metadata": {
                 "description": "Admin password"
             }
