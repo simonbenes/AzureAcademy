@@ -27,14 +27,14 @@
         }
     },
     "variables": {
-        "vnetClientName": "vnetC",
+        "vnetClientName": "vnetClient",
         "vnetClientNet": "10.1.0.0/16",
         "vnetClientId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]",
         "subnetClientName": "subnetClient",
         "subnetClientNet": "10.1.0.0/24",
         "nicClientName": "nicClient",
         "ipAddressClient": "10.1.0.100",
-        "vnetServerName": "vnetS",
+        "vnetServerName": "vnetServer",
         "vnetServerNet": "10.10.0.0/16",
         "vnetServerId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]",
         "subnetServerName": "subnetServer",
