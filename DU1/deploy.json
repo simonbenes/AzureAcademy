@@ -198,12 +198,11 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name":  "[concat('diskClient', uniqueString(resourceGroup().id))]",
+                        "name":  "[variables('diskClientName')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "[variables('diskType')]",
-                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskClientName'))]"
+                            "storageAccountType": "[variables('diskType')]"
                         }
                     },
                     "dataDisks": []
@@ -390,12 +389,11 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name":  "[concat('diskServer', uniqueString(resourceGroup().id))]",
+                        "name":  "[variables('diskServerName')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
                             "storageAccountType": "[variables('diskType')]",
-                            "id": "[resourceId('Microsoft.Compute/disks', variables('diskServerName'))]"
                         }
                     },
                     "dataDisks": []
