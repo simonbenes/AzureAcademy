@@ -1,31 +1,30 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "adminUsername": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Admin username"
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin password"
-      }
-    },
-    "numberOfInstances": {
-      "type": "int",
-      "minValue": 1,
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Number of VM instances to be created behind internal load balancer control"
-      }
-    },
-    "publicipaddressDnsName": {
-      "type": "string",
-      "minLength": 1
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "spravce",
+            "metadata": {
+                "description": "Admin username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "defaultValue": "Azure123456789",
+            "metadata": {
+                "description": "Admin password"
+            }
+        },
+        "vmprefix": {
+            "type": "string",
+            "defaultValue": "SBE_",
+            "metadata": {
+                "description": "VM prefix"
+            }
+        }
     }
   },
   "variables": {
