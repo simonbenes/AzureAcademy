@@ -177,7 +177,9 @@
             "tags": {
                 "displayName": "virtual-machine"
             },
-            "dependsOn": [],
+            "dependsOn": [
+                "[concat('Microsoft.Compute/networkInterfaces/', variables('nicClientName'))]"
+            ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[variables('vmSize')]"
@@ -368,7 +370,9 @@
             "tags": {
                 "displayName": "virtual-machine"
             },
-            "dependsOn": [],
+            "dependsOn": [
+                "[concat('Microsoft.Compute/networkInterfaces/', variables('nicServerName'))]"
+            ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[variables('vmSize')]"
