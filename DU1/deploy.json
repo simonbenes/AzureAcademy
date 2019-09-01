@@ -4,7 +4,7 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
-            "minLength": 3,
+            "minLength": 1,
             "defaultValue": "spravce",
             "metadata": {
                 "description": "Admin username"
@@ -72,9 +72,7 @@
                     {
                         "name": "[variables('subnetClientName')]",
                         "properties": {
-                            "addressPrefix": [
-                                "[variables('subnetClientNet')]"
-                            ]
+                            "addressPrefix": "[variables('subnetClientNet')]"
                         }
                     }
                 ],
@@ -240,9 +238,7 @@
                     {
                         "name": "[variables('subnetServerName')]",
                         "properties": {
-                            "addressPrefix": [
-                                "[variables('subnetServerNet')]"
-                            ],
+                            "addressPrefix": "[variables('subnetServerNet')]",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
                             }
@@ -278,9 +274,7 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
             ],
             "properties": {
-                "addressPrefix": [
-                    "[variables('subnetServerNet')]"
-                ]
+                "addressPrefix": "[variables('subnetServerNet')]"
             }
         },
         {
