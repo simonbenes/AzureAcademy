@@ -43,7 +43,7 @@
         "ipAddressServer": "10.10.0.100",
         "nsg": "nsg",
         "pipName": "pip",
-        "pipId": "[resourceId('Microsoft.Network/virtualNetworks', variables('pipName'))]",
+        "pipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]",
         "vmClientName": "vmClient",
         "vmServerName": "vmServer",
         "vmSize": "Standard_DS1_v2",
@@ -149,7 +149,7 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[variables('ipAddressClient')]",
                             "publicIPAddress": {
-                                "id": "[concat(variables('pipId'), '/publicIPAddress/', variables('pipName'))]"
+                                "id": "[variables('pipId')]"
                             },
                             "subnet": {
                                 "id": "[concat(variables('vnetClientId'), '/subnets/', variables('subnetClientName'))]"
