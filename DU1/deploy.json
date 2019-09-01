@@ -81,7 +81,7 @@
                         "name": "peerClient2Server",
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetClientName'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetServerName'))]"
                             },
                             "allowVirtualNetworkAccess": true,
                             "allowForwardedTraffic": false,
@@ -89,7 +89,7 @@
                             "useRemoteGateways": false,
                             "remoteAddressSpace": {
                                 "addressPrefixes": [
-                                    "[variables('subnetServerName')]"
+                                    "[variables('subnetServerNet')]"
                                 ]
                             }
                         }
@@ -429,7 +429,7 @@
                             "fileUris": "[variables('scriptURI')]"
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'))]"
                         }
                     }
                 }
