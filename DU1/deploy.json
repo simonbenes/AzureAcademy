@@ -178,7 +178,7 @@
                 "displayName": "virtual-machine"
             },
             "dependsOn": [
-                "[concat('Microsoft.Compute/networkInterfaces/', variables('nicClientName'))]"
+                "[resourceId('Microsoft.Compute/networkInterfaces', variables('nicClientName'))]"
             ],
             "properties": {
                 "hardwareProfile": {
