@@ -64,7 +64,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [
+                    "addressPrefixes": [ 
                         "[variables('vnetClientNet')]"
                     ]
                 },
