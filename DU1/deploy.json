@@ -51,8 +51,8 @@
         "imageOffer": "WindowsServer",
         "windowsOSVersion": "2019-Datacenter-smalldisk",
         "diskType": "Premium_LRS",
-        "diskClientName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
-        "diskServerName": "[concat('diskOsClient', '_', uniqueString(resourceGroup().id))]",
+        "diskClientName": "[concat('diskOsClient', uniqueString(resourceGroup().id))]",
+        "diskServerName": "[concat('diskOsServer', uniqueString(resourceGroup().id))]",
         "scriptName": "script.ps1",
         "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureAcademy/master/DU1/', variables('scriptName'))]"
     },
