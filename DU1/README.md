@@ -12,6 +12,9 @@ Tasks
 6. Configure monitoring to monitor IIS/nginx process CPU consumption
 7. Configure backup
 
+Schema
+(homework.png)
+
 Output
 
 1. Screenshot of all resources in your resource group
