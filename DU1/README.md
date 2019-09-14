@@ -22,6 +22,7 @@ Output
 
 **Compress this output and save it into Azure Academy Teams folder and post new message you did your homework**
 
+
 # Řešení
 
 Nasazení domácí úlohy 1 <br>
