@@ -373,7 +373,7 @@
             "resources": [
                 {
                     "apiVersion": "2018-06-01",
-                    "type": "extensions",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
                     "name": "scriptServer",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
@@ -388,10 +388,13 @@
                         "typeHandlerVersion": "1.9",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "fileUris": "[variables('scriptURI')]"
+                            "fileUris": [
+                                "variables('scriptURI')"
+                            ],
+                            "timestamp": 123456789
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./', variables('scriptName'))]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptName'))]"
                         }
                     }
                 }
