@@ -1,4 +1,4 @@
-#Zadání
+# Zadání
 
 https://github.com/azurecz/azuretechacademy-hybridit-labs-day1/blob/master/homework/readme.md
 
@@ -22,7 +22,7 @@ Output
 
 **Compress this output and save it into Azure Academy Teams folder and post new message you did your homework**
 
-#Řešení
+# Řešení
 
 Nasazení domácí úlohy 1 <br>
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsimonbenes%2FAzureAcademy%2Fmaster%2FDU1%2Fdeploy.json" target="_blank">
