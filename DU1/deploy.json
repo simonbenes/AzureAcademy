@@ -389,7 +389,7 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "variables('scriptURI')"
+                                "[variables('scriptURI')]"
                             ],
                             "timestamp": 123456789
                         },
