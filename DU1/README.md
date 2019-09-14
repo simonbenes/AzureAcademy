@@ -13,7 +13,7 @@ Tasks
 7. Configure backup
 
 Schema
-(homework.png)
+![DU1](homework.png)
 
 Output
 
