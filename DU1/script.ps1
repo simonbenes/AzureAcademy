@@ -27,6 +27,6 @@ $cert = New-SelfSignedCertificate -CertStoreLocation 'Cert:\LocalMachine\My' -Dn
 Remove-WebSite -Name "Default Web Site"
 #Set-ItemProperty IIS:\AppPools\DefaultAppPool\ managedRuntimeVersion ""
 New-Website -Name "Demo" -IPAddress * -Port 443 -Protocol https
-$provider = 'IIS:\SSLBindings\0.0.0.0!44'
+$provider = 'IIS:\SSLBindings\0.0.0.0!443'
 Get-Item $cert | New-Item $provider
 & iisreset
