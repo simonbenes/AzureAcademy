@@ -54,7 +54,8 @@
         "diskClientName": "[concat('diskOsClient', uniqueString(resourceGroup().id))]",
         "diskServerName": "[concat('diskOsServer', uniqueString(resourceGroup().id))]",
         "scriptName": "script.ps1",
-        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureAcademy/master/DU1/', variables('scriptName'))]"
+        "scriptURI": "[concat('https://raw.githubusercontent.com/simonbenes/AzureAcademy/master/DU1/', variables('scriptName'))]",
+        "backupName": "backup-vault"
     },
     "resources": [
         {
@@ -439,6 +440,52 @@
                     }
                 }
             ]
+        },
+        {
+            "apiVersion": "2018-01-10",
+            "type": "Microsoft.RecoveryServices/vaults",
+            "name": "[variables('backupName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-12-01",
+            "name": "[concat(variables('backupName'), '/DefaultPolicy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', variables('backupName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureIaasVM",
+                "protectedItemsCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-12-01",
+            "name": "[concat(variables('backupName'), '/HourlyLogBackup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', variables('backupName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureWorkload",
+                "protectedItemsCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/replicationAlertSettings",
+            "apiVersion": "2018-01-10",
+            "name": "[concat(variables('backupName'), '/defaultAlertSetting')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', variables('backupName'))]"
+            ],
+            "properties": {
+                "sendToOwners": "DoNotSend",
+                "customEmailAddresses": []
+            }
         }
     ]
 }
