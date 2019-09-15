@@ -20,8 +20,13 @@ netsh advfirewall firewall add rule name="test" dir=in action=block protocol=TCP
 # Install iis
 Install-WindowsFeature web-server -IncludeManagementTools
 
+# Prepare certificate
+$cert = New-SelfSignedCertificate -CertStoreLocation 'Cert:\LocalMachine\My' -DnsName 'demo.contoso.com'
+
 # Configure iis
-#Remove-WebSite -Name "Default Web Site"
+Remove-WebSite -Name "Default Web Site"
 #Set-ItemProperty IIS:\AppPools\DefaultAppPool\ managedRuntimeVersion ""
-#New-Website -Name "MusicStore" -Port 80 -PhysicalPath C:\music\ -ApplicationPool DefaultAppPool
-#& iisreset
+New-Website -Name "Demo" -IPAddress * -Port 443 -Protocol https
+$provider = 'IIS:\SSLBindings\0.0.0.0!44'
+Get-Item $cert | New-Item $provider
+& iisreset
