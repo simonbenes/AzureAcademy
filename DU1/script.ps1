@@ -3,11 +3,6 @@
         Skript domaci ulohy 1. Nastavi firewall, nainstaluje IIS
 #>
 
-Param (
-    [string]$user,
-    [string]$password
-)
-
 # Force use of TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
