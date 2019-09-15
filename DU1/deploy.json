@@ -373,7 +373,7 @@
             "resources": [
                 {
                     "apiVersion": "2018-06-01",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "type": "extensions",
                     "name": "scriptServer",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
@@ -388,9 +388,7 @@
                         "typeHandlerVersion": "1.9",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "fileUris": [
-                                "[variables('scriptURI')]"
-                            ],
+                            "fileUris": "[variables('scriptURI')]",
                             "timestamp": 123456789
                         },
                         "protectedSettings": {
