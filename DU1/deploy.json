@@ -100,7 +100,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "peerClient2Server",
+            "name": "[concat(variables('vnetClientName') , '/peerClient2Server')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vnetServerName'))]",
@@ -269,7 +269,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "peerServer2Client",
+            "name": "[concat(variables('vnetServerName') , '/peerServer2Client')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vnetServerName'))]",
